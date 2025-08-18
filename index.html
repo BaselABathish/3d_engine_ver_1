@@ -11,6 +11,14 @@
 <script>
     const canvas = document.getElementById('canvas');
     const ctx = canvas.getContext('2d'); //2d drawing context so I can fake 3d using math
+    let d = 400
+    let angleX = 0, angleY = 0, angleZ = 0 //keep track of rotation
+    window.addEventListener('keydown', e => {
+        if (e.key === 'ArrowLeft') angleY -= 0.1;
+        if (e.key === 'ArrowRight') angleY += 0.1;
+        if (e.key === 'ArrowUp') angleX -= 0.1;
+        if (e.key === 'ArrowDown') angleX += 0.1;
+    });
 
     // Cube vertices (3D points)
     const vertices = [
@@ -21,7 +29,9 @@
         [-1, -1, 1],
         [1, -1, 1],
         [1, 1, 1],
-        [-1, 1, 1]
+        [-1, 1, 1],
+
+
     ];
 
     // Cube edges (pairs of vertex indices), [first point, second point]
@@ -29,17 +39,31 @@
         [0,1],[1,2],[2,3],[3,0],
         [4,5],[5,6],[6,7],[7,4],
         [0,4],[1,5],[2,6],[3,7],
-        [0, 6]
+
+
+
 
     ];
 
     // TEMP placeholder: simply draw vertices as points
     function draw(vertices) {
         ctx.clearRect(0, 0, canvas.width, canvas.height); //clears canvas
+        //d is defined above
+        const Zoffset = 5
 
         for (const [i, j] of edges) { //connect each i to j
-            const [x1, y1] = [canvas.width/2 + vertices[i][0]*100, canvas.height/2 - vertices[i][1]*100];
-            const [x2, y2] = [canvas.width/2 + vertices[j][0]*100, canvas.height/2 - vertices[j][1]*100];
+
+            const ix = (vertices[i][0]*d)/ (vertices[i][2] +Zoffset); //try with and without offset
+            const iy = (vertices[i][1]*d)/ (vertices[i][2] +Zoffset);
+
+            const jx = (vertices[j][0]*d)/ (vertices[j][2] +Zoffset);
+            const jy = (vertices[j][1]*d)/ (vertices[j][2] +Zoffset);
+
+            const x1 = canvas.width/2 + ix //0, 0 on the canvas is in the top left corner, not the centre of the screen
+
+            const y1 = canvas.height/2 - iy //on the canvas y increases downward, so you must subtract
+            const x2 = canvas.width/2 + jx
+            const y2 = canvas.height/2 - jy
 
             ctx.beginPath();
             ctx.moveTo(x1, y1);
@@ -49,12 +73,42 @@
         }
     }
 
-    function project(vertices) {)
+
+    function rotateX([x, y, z], angle) {
+        let newY = y * Math.cos(angle) - z * Math.sin(angle);
+        let newZ = y * Math.sin(angle) + z * Math.cos(angle);
+        return [x, newY, newZ];
+    }
+
+
+    function rotateY([x, y, z], angle) {
+        let newX = (x*Math.cos(angle))+(z*Math.sin(angle));
+        let newZ = (-x*Math.sin(angle))+(z*Math.cos(angle));
+        return [newX, y, newZ];
+    }
+
+
+
+    function rotateZ([x, y, z], angle) {
+        let newX = (x*Math.cos(angle))-(y*Math.sin(angle));
+        let newY = (x*Math.sin(angle))+(y*Math.cos(angle));
+
+        return [newX, newY, z];
+    }
+
 
     // Animation loop
     function loop() {
-        // No rotation, projection, or math yet
-        draw(vertices);
+        let rotated_vertices = [];
+        for (v of vertices) {
+            let a = rotateX(v, angleX);
+            a = rotateY(a, angleY);
+            a = rotateZ(a, angleZ);
+
+            rotated_vertices.push(a);
+        }
+
+        draw(rotated_vertices);
         requestAnimationFrame(loop);
     }
 
