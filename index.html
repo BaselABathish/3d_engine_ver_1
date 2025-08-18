@@ -7,7 +7,7 @@
     </style>
 </head>
 <body>
-<canvas id="canvas" width="600" height="400"></canvas>
+<canvas id="canvas" width="800px" height="800px"></canvas>
 <script>
     const canvas = document.getElementById('canvas');
     const ctx = canvas.getContext('2d'); //2d drawing context so I can fake 3d using math
@@ -18,7 +18,16 @@
         if (e.key === 'ArrowRight') angleY += 0.1;
         if (e.key === 'ArrowUp') angleX -= 0.1;
         if (e.key === 'ArrowDown') angleX += 0.1;
+
+        if (e.key === 'q') cameraY += 10;
+        if (e.key === 'e') cameraY -= 10;
+        if (e.key === 'a') cameraX -= 10;
+        if (e.key === 'd') cameraX += 10;
+        if (e.key === 'w') d += 10;
+        if (e.key === 's') d -= 10;
     });
+
+    let cameraX = 0,  cameraY = 0,  cameraZ = 0
 
     // Cube vertices (3D points)
     const vertices = [
@@ -53,11 +62,11 @@
 
         for (const [i, j] of edges) { //connect each i to j
 
-            const ix = (vertices[i][0]*d)/ (vertices[i][2] +Zoffset); //try with and without offset
-            const iy = (vertices[i][1]*d)/ (vertices[i][2] +Zoffset);
+            const ix = ((vertices[i][0]*d)/ (vertices[i][2] +Zoffset))+cameraX; //try with and without offset
+            const iy = ((vertices[i][1]*d)/ (vertices[i][2] +Zoffset))+cameraY;
 
-            const jx = (vertices[j][0]*d)/ (vertices[j][2] +Zoffset);
-            const jy = (vertices[j][1]*d)/ (vertices[j][2] +Zoffset);
+            const jx = ((vertices[j][0]*d)/ (vertices[j][2] +Zoffset))+cameraX;
+            const jy = ((vertices[j][1]*d)/ (vertices[j][2] +Zoffset))+cameraY;
 
             const x1 = canvas.width/2 + ix //0, 0 on the canvas is in the top left corner, not the centre of the screen
 
