@@ -1,10 +1,64 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-  <meta charset="UTF-8">
-  <title>$Title$</title>
+    <title>Minimal Cube</title>
+    <style>
+        canvas { background: #000; display: block; margin: auto; }
+    </style>
 </head>
 <body>
-$END$
+<canvas id="canvas" width="600" height="400"></canvas>
+<script>
+    const canvas = document.getElementById('canvas');
+    const ctx = canvas.getContext('2d'); //2d drawing context so I can fake 3d using math
+
+    // Cube vertices (3D points)
+    const vertices = [
+        [-1, -1, -1],
+        [1, -1, -1],
+        [1, 1, -1],
+        [-1, 1, -1],
+        [-1, -1, 1],
+        [1, -1, 1],
+        [1, 1, 1],
+        [-1, 1, 1]
+    ];
+
+    // Cube edges (pairs of vertex indices), [first point, second point]
+    const edges = [
+        [0,1],[1,2],[2,3],[3,0],
+        [4,5],[5,6],[6,7],[7,4],
+        [0,4],[1,5],[2,6],[3,7],
+        [0, 6]
+
+    ];
+
+    // TEMP placeholder: simply draw vertices as points
+    function draw(vertices) {
+        ctx.clearRect(0, 0, canvas.width, canvas.height); //clears canvas
+
+        for (const [i, j] of edges) { //connect each i to j
+            const [x1, y1] = [canvas.width/2 + vertices[i][0]*100, canvas.height/2 - vertices[i][1]*100];
+            const [x2, y2] = [canvas.width/2 + vertices[j][0]*100, canvas.height/2 - vertices[j][1]*100];
+
+            ctx.beginPath();
+            ctx.moveTo(x1, y1);
+            ctx.lineTo(x2, y2);
+            ctx.strokeStyle = 'white';
+            ctx.stroke();
+        }
+    }
+
+    function project(vertices) {)
+
+    // Animation loop
+    function loop() {
+        // No rotation, projection, or math yet
+        draw(vertices);
+        requestAnimationFrame(loop);
+    }
+
+    loop();
+</script>
 </body>
 </html>
