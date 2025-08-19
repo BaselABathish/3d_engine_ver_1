@@ -3,10 +3,161 @@
 <head>
     <title>Minimal Cube</title>
     <style>
-        canvas { background: #000; display: block; margin: auto; }
+        /* Base styles */
+        body, html {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            touch-action: manipulation;
+        }
+
+        /* Canvas styling */
+        canvas {
+            background: #000;
+            display: block;
+            margin: auto;
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            top: 0;
+            left: 0;
+        }
+
+        /* Controls container */
+        #controls {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(10px);
+            padding: 15px;
+            border-radius: 20px 20px 0 0;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.3);
+            z-index: 100;
+        }
+
+        /* Control groups */
+        .control-group {
+            display: flex;
+            justify-content: space-between;
+            gap: 8px;
+        }
+
+        /* Buttons styling */
+        button {
+            flex: 1;
+            padding: 14px 5px;
+            border: none;
+            border-radius: 12px;
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            min-height: 50px;
+            touch-action: manipulation;
+        }
+
+        button:active {
+            background: rgba(255, 255, 255, 0.2);
+            transform: scale(0.96);
+        }
+
+        /* Display text */
+        #display {
+            color: white;
+            text-align: center;
+            margin: 0 0 10px 0;
+            font-size: 16px;
+            font-weight: 500;
+        }
+
+        /* Media queries for responsiveness */
+        @media (min-width: 768px) {
+            #controls {
+                top: 10px;
+                bottom: auto;
+                left: 10px;
+                right: auto;
+                width: 200px;
+                border-radius: 12px;
+                padding: 15px;
+            }
+
+            .control-group {
+                flex-direction: column;
+            }
+
+            button {
+                padding: 10px;
+                min-height: 44px;
+            }
+        }
+
+        @media (max-width: 380px) {
+            button {
+                font-size: 12px;
+                padding: 12px 5px;
+            }
+
+            #display {
+                font-size: 14px;
+            }
+        }
+
+        /* Orientation warning for mobile */
+        @media (max-height: 500px) and (orientation: landscape) {
+            #orientation-warning {
+                position: fixed;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                background: rgba(0, 0, 0, 0.9);
+                color: white;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                z-index: 1000;
+                padding: 20px;
+                text-align: center;
+            }
+        }
+
+        #orientation-warning {
+            display: none;
+        }
     </style>
 </head>
 <body>
+<div id="orientation-warning">
+    <p>For the best experience, please rotate your device to portrait mode.</p>
+</div>
+
+<div id="controls">
+    <p id="display"></p>
+    <div class="control-group">
+        <button onclick="cameraZ += 1; update_mobile_display()">Forward</button>
+        <button onclick="cameraZ -= 1; update_mobile_display()">Back</button>
+    </div>
+    <div class="control-group">
+        <button onclick="cameraX += 1; update_mobile_display()">Right</button>
+        <button onclick="cameraX -= 1; update_mobile_display()">Left</button>
+    </div>
+    <div class="control-group">
+        <button onclick="angleY += 0.1; update_mobile_display()">Rotate Left</button>
+        <button onclick="angleY -= 0.1; update_mobile_display()">Rotate Right</button>
+    </div>
+</div>
+
 <canvas id="canvas" width="800px" height="600px"></canvas>
 <script src="engine.js"></script>
 </body>
