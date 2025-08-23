@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Webpage builder</title>
+
+    <style>
+
+        .draggable {
+            position: absolute;
+        }
+
+        #dis {
+
+            border: 4px solid black;
+
+        }
+
+        #element_content {
+            width: 20%;
+            resize: none;
+        }
+
+        .stack_select {
+            display: flex;
+            flex-direction: column;
+            width: 20%;
+            overflow: auto;
+        }
+
+        .menu{
+            z-index: 9999;
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            background-color: #19254e;
+            width: 100%;
+            height: 20%;
+            border-radius: 5px;
+            border: 5px solid #000000;
+
+            display: flex;
+        }
+
+        .menu * {
+            margin: 10px;
+            background-color: #ffffff;
+            border-radius: 5px;
+            border : 2px solid #a8a8a8;
+            font-weight: bold;
+        }
+
+
+        .menu input {
+            background-color: #ffffff;
+            border-radius: 5px;
+            border : 5px solid #000000;
+        }
+
+    </style>
+
+
+</head>
+<body>
+<button onclick="create_element()">Add element</button>
+<button onclick="download_doc()">Download</button>
+
+
+<input type = 'number' id = 'document_height'>
+<button onclick = 'resizeContainer()'>Resize</button>
+<div class = 'menu'>
+    <select id = 'tag'>
+        <option value="h1">Heading (h1)</option>
+        <option value="p">Paragraph</option>
+    </select>
+    <textarea id = 'element_content' placeholder="Content..."></textarea>
+
+    <div class = 'stack_select'>
+       <span>Colour: <input type = 'color' id = 'element_colour'></span>
+        <span>Font: <select id = 'element_font'>
+            <option value = 'Arial'>Arial</option>
+            <option value = 'Verdana'>Verdana</option>
+            <option value = 'Tahoma'>Tahoma</option>
+            <option value="Georgia">Georgia</option>
+            <option value = 'Courier New'>Courier New</option>
+        </select>
+        Serif: <input type = 'checkbox' id = 'element_serif'>
+        </span>
+        <span>ID:
+            <input id = 'element_id' type = 'text'>
+        </span>
+    </div>
+
+</div>
+
+<div id = 'dis'></div>
+<br><br><br><br><br><br><br><br> <!--Because of the menu at the bottom-->
+<script>
+    let current_document = `<!DOCTYPE html>
+    <html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title></title>
+    </head>
+    <body>` //this is the document that can be downloaded
+
+    let dis = document.getElementById('dis');
+    let created_elements = 0
+
+    function create_element() {
+        let tag = document.getElementById('tag').value
+        let content = document.getElementById('element_content').value
+        let element_colour = document.getElementById('element_colour').value
+        let element_font = document.getElementById('element_font').value
+        let element_serif = document.getElementById('element_serif').checked
+        let element_id = document.getElementById('element_id').value
+
+        created_elements += 1
+        let e = document.createElement('div')
+
+        e.style.position = 'absolute' //for draggability
+
+        e.innerHTML = `
+
+            <${tag} id = "${element_id}" style = "color: ${element_colour}; font-family: ${element_font}, Arial, ${element_serif ? 'serif' : 'sans-serif'};">${content}</${tag}>
+            `
+        dragElement(e)
+
+        dis.appendChild(e)
+
+
+    }
+
+    function download_doc() {
+
+        current_document += dis.innerHTML
+
+        current_document += `\n</body>\n</html>`
+
+        const blob = new Blob([current_document], {
+            type: 'html'
+        })
+        //create a url for the blob
+        const url = URL.createObjectURL(blob);
+
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'test.html';
+
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+
+        URL.revokeObjectURL(url);
+
+    }
+
+    function dragElement(elmnt) {
+        var pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
+            // otherwise, move the DIV from anywhere inside the DIV:
+        elmnt.onmousedown = dragMouseDown;
+
+        function dragMouseDown(e) {
+            e = e || window.event;
+            e.preventDefault();
+            // get the mouse cursor position at startup:
+            pos3 = e.clientX;
+            pos4 = e.clientY;
+
+            document.onmouseup = closeDragElement;
+            // call a function whenever the cursor moves:
+            document.onmousemove = elementDrag;
+        }
+
+        function elementDrag(e) {
+            e = e || window.event;
+            e.preventDefault();
+            // calculate the new cursor position:
+            pos1 = pos3 - e.clientX;
+            pos2 = pos4 - e.clientY;
+            pos3 = e.clientX;
+            pos4 = e.clientY;
+            // set the element's new position:
+            elmnt.style.top = (elmnt.offsetTop - pos2) + "px";
+            elmnt.style.left = (elmnt.offsetLeft - pos1) + "px";
+
+        }
+
+        function closeDragElement() {
+            // stop moving when mouse button is released:
+            document.onmouseup = null;
+            document.onmousemove = null;
+        }
+    }
+
+    function resizeContainer() {
+        const maxBottom = document.getElementById('document_height').value
+        let dis = document.getElementById('dis');
+
+        dis.style.height = maxBottom + "px";
+
+
+    }
+
+
+</script>
+
+</body>
+</html>
