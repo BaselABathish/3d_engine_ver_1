@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Minimal Cube</title>
+    <title>3D Graphics v1</title>
     <style>
         /* Base styles */
         body, html {
@@ -138,12 +138,14 @@
     </style>
 </head>
 <body>
+<p id="display"></p>
+
+<!--Mobile support-->
+<div hidden>
 <div id="orientation-warning">
     <p>For the best experience, please rotate your device to portrait mode.</p>
 </div>
-
 <div id="controls">
-    <p id="display"></p>
     <div class="control-group">
         <button onclick="cameraZ += 1; update_mobile_display()">Forward</button>
         <button onclick="cameraZ -= 1; update_mobile_display()">Back</button>
@@ -156,6 +158,7 @@
         <button onclick="angleY += 0.1; update_mobile_display()">Rotate Left</button>
         <button onclick="angleY -= 0.1; update_mobile_display()">Rotate Right</button>
     </div>
+</div>
 </div>
 
 <canvas id="canvas" width="800px" height="600px"></canvas>

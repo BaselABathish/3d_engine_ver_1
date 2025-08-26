@@ -3,9 +3,7 @@
     const ctx = canvas.getContext('2d'); //2d drawing context so I can fake 3d using math
     let d = 400
 
-    const dis = document.getElementById('display');
-
-
+    const dis = document.getElementById('display'); //to show coordinates and rotation
 
     let angleX = 0, angleY = 0, angleZ = 0 //keep track of rotation
     let cameraX = 0,  cameraY = 0,  cameraZ = 0
@@ -24,14 +22,15 @@
     if (e.key === 'd') cameraX += 1;
     if (e.key === 'w') cameraZ += 1;
     if (e.key === 's') cameraZ -= 1;
-    display.innerText = `X pos: ${cameraX}, Y pos: ${cameraY}, Z pos: ${cameraZ} \n X angle: ${angleX} Y angle: ${angleY}`;
+    dis.innerText = `X pos: ${cameraX}, Y pos: ${cameraY}, Z pos: ${cameraZ} \n X angle: ${angleX} Y angle: ${angleY}`;
 
     });
 
+    /*
     function update_mobile_display(){
-        display.innerText = `X pos: ${cameraX}, Y pos: ${cameraY}, Z pos: ${cameraZ} \n X angle: ${angleX} Y angle: ${angleY}`;
-
+        dis.innerText = `X pos: ${cameraX}, Y pos: ${cameraY}, Z pos: ${cameraZ} \n X angle: ${angleX} Y angle: ${angleY}`;
     }
+     */
 
     // Cube vertices (3D points)
     const vertices = [
@@ -60,8 +59,30 @@
          */
 
     ];
-    function cube(start_x, start_y, start_z, size) {
 
+    function worldToCamera([x,y,z]) {
+        // translate world so camera is at origin (just get position of v relative to camera)
+        let dx = x - cameraX;
+        let dy = y - cameraY;
+        let dz = z - cameraZ;
+
+        // **inverse** rotate Y (camera yaw) because we're imagining that the camera is rotating
+
+        //NOTE: we're rotating the inverse of theta, it is important to keep in mind that cos(-x) = cos(x) but sin(-x) = -sin(x) so one must be careful when translating the rotation matrix
+        let cosY = Math.cos(-angleY), sinY = Math.sin(-angleY);
+        let xz = dx * cosY - dz * sinY;
+        let zz = dx * sinY + dz * cosY;
+
+        // inverse rotate X (camera pitch)
+        let cosX = Math.cos(-angleX), sinX = Math.sin(-angleX);
+        let yz = dy * cosX - zz * sinX;
+        let zz2 = dy * sinX + zz * cosX;
+
+        return [xz, yz, zz2];
+    }
+
+    //cool shapes
+    function cube(start_x, start_y, start_z, size) {
         let c = [
 
             [start_x, start_y, start_z], //0, 0, 0
@@ -148,37 +169,6 @@
 
 
     }
-
-
-    function worldToCamera([x,y,z]) {
-        // translate world so camera is at origin
-        let dx = x - cameraX;
-        let dy = y - cameraY;
-        let dz = z - cameraZ;
-
-        // inverse rotate Y (camera yaw)
-        let cosY = Math.cos(-angleY), sinY = Math.sin(-angleY);
-        let xz = dx * cosY - dz * sinY;
-        let zz = dx * sinY + dz * cosY;
-
-        // inverse rotate X (camera pitch)
-        let cosX = Math.cos(-angleX), sinX = Math.sin(-angleX);
-        let yz = dy * cosX - zz * sinX;
-        let zz2 = dy * sinX + zz * cosX;
-
-        return [xz, yz, zz2];
-    }
-
-/*
-    cube(-2, -2, -2, 4)
-    pyramid(-1, -1, -1, 2)
-    pyramid(1, 1, 1, -2)
-
- */
-
-    //character
-
-
     function sphere(mx, my, mz, msize) {
         let visited = new Set()
         function wrapper(x, y, z, size){
@@ -210,26 +200,83 @@
 
 
 
-    }
+        }
 
         wrapper(mx, my, mz, msize);
 
 
     }
+    function wall(start_x, start_y, start_z, direction, length) {
+
+        let x = {value: start_x}, y = {value: start_y}, z = {value: start_z} //so I can fake pointers
+
+        let change_variable //chooses which variable will change
+
+        let d = 1 //positive or negative
+
+        switch(direction) {
+            case 'x+':
+                change_variable = x;
+                d = 1
+                break;
+            case 'x-':
+                change_variable = x;
+                d = -1
+                break;
+            case 'y+': //not sure why anyone would use this
+                change_variable = y;
+                d = 1
+                break;
+            case 'y-':
+                change_variable = y;
+                d = -1
+                break;
+            case 'z+':
+                change_variable = z;
+                d = 1
+                break;
+            case 'z-':
+                change_variable = z;
+                d = -1
+                break;
+            default:
+                console.log('Enter a valid direction');
+                break;
+        }
+
+        let goal = Math.abs(change_variable.value)+length;
+
+        while(Math.abs(change_variable.value) < goal) {
+            cube(x.value, y.value, z.value, 1);
+            pyramid(x.value, y.value+1, z.value, 1);
+            change_variable.value += d
+        }
+
+
+    }
+
+
+
+    cube(0, 0, 0, 1)
+    cube(10, 0, 0, 1)
+    cube(10, 0, 5, 1)
+    cube(0, 0, 5, 1)
+    cube(0, 1, 0, 1)
+    cube(10, 1, 0, 1)
+    cube(10, 1, 5, 1)
+    cube(0, 1, 5, 1)
+
+    wall(0, 2, 0, 'x+', 10)
+    wall(0, 2, 5, 'x+', 10)
+    wall(10, 2, 0, 'z+', 6)
+    wall(0, 2, 0, 'z+', 6)
 
 
 
 
 
-    sphere(0, 0, -2, 3)
-    sphere(0, -5, 0, 3)
-    sphere(6, 0, 4, 3)
 
-
-
-
-
-    // TEMP placeholder: simply draw vertices as points
+    // TEMP placeholder: simply draw vertices as points (maybe fill in later)
     function draw(vertices) {
     ctx.clearRect(0, 0, canvas.width, canvas.height); //clears canvas
     //d is defined above
