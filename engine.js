@@ -16,6 +16,8 @@
     if (e.key === 'ArrowUp') angleX -= 0.1;
     if (e.key === 'ArrowDown') angleX += 0.1;
 
+    if (e.code === 'Space') place_item();
+
     if (e.key === 'q') cameraY += 1;
     if (e.key === 'e') cameraY -= 1;
     if (e.key === 'a') cameraX -= 1;
@@ -26,6 +28,11 @@
 
     });
 
+    function place_item() { //will do later, just made the function as a reminder
+        console.log(cameraX, cameraY, cameraZ)
+        cube(cameraX, cameraY, cameraZ+2, 1)
+    }
+
     /*
     function update_mobile_display(){
         dis.innerText = `X pos: ${cameraX}, Y pos: ${cameraY}, Z pos: ${cameraZ} \n X angle: ${angleX} Y angle: ${angleY}`;
@@ -33,7 +40,7 @@
      */
 
     // Cube vertices (3D points)
-    const vertices = [
+    let vertices = [
 
         /*
     [-1, -1, -1],
@@ -50,7 +57,7 @@
 
     ];
     // Cube edges (pairs of vertex indices), [first point, second point]
-    const edges = [
+    let edges = [
         /*
     [0,1],[1,2],[2,3],[3,0],
     [4,5],[5,6],[6,7],[7,4],
@@ -255,8 +262,7 @@
 
     }
 
-
-
+ /*
     cube(0, 0, 0, 1)
     cube(10, 0, 0, 1)
     cube(10, 0, 5, 1)
@@ -271,6 +277,39 @@
     wall(10, 2, 0, 'z+', 6)
     wall(0, 2, 0, 'z+', 6)
 
+  */
+
+    function save() {
+        const content = JSON.stringify({vertices: vertices, edges: edges});
+        const blob = new Blob([content], { type: 'json' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url; a.download = 'b3d_save.json'; a.click();
+    }
+
+    const file_upload = document.getElementById('upload');
+
+    file_upload.addEventListener('change', function(e) {
+        const file = e.target.files[0];
+        if (!file) return;
+
+        const fr = new FileReader();
+
+        fr.onload = (e) => { //this runs after the file is actually read, which is why I need fr.readAsText at the bottotm
+            try {
+                const content = e.target.result;
+                const data = JSON.parse(content);
+
+                vertices = data.vertices;
+                edges = data.edges;
+                //console.log(data.vertices);
+            } catch (error) {
+                console.log("Error parsing JSON:", error);
+            }
+        };
+
+        fr.readAsText(file);
+    });
 
 
 

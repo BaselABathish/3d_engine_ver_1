@@ -17,18 +17,20 @@ Trying to understand 3D graphics concepts by applying what I study. This project
 - **Rotation Controls:** Rotate camera with arrow keys
 - **Perspective Projection:** Simulates depth on a 2D canvas
 - **Vanilla JS:** No external libraries required
+- **Save and load your creations:**  
 
 ---
 
 ## Controls
 
-| Key | Action |
-|-----|-------|
-| Arrow Up / Down | Rotate camera X-axis (pitch) |
-| Arrow Left / Right | Rotate camera Y-axis (yaw) |
-| W / S | Move camera forward/backward (Z-axis) |
-| A / D | Move camera left/right (X-axis) |
-| Q / E | Move camera up/down (Y-axis) |
+| Key                | Action                                |
+|--------------------|---------------------------------------|
+| Arrow Up / Down    | Rotate camera X-axis (pitch)          |
+| Arrow Left / Right | Rotate camera Y-axis (yaw)            |
+| W / S              | Move camera forward/backward (Z-axis) |
+| A / D              | Move camera left/right (X-axis)       |
+| Q / E              | Move camera up/down (Y-axis)          |
+| Spacebar           | Place block                           |
 
 ---
 

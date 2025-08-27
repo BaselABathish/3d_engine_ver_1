@@ -14,6 +14,21 @@
             touch-action: manipulation;
         }
 
+        header {
+            height: 50px;
+            display: flex;
+            background: white;
+            box-shadow: 0px 0px 10px;
+            z-index: 100;
+
+        }
+
+        header button, input {
+            margin: 5px;
+
+            padding: 10px;
+
+        }
         /* Canvas styling */
         canvas {
             background: #000;
@@ -22,11 +37,22 @@
             width: 100%;
             height: 100%;
             position: absolute;
-            top: 0;
+            top: 60px;
             left: 0;
         }
 
-        /* Controls container */
+        /* Display text */
+        #display {
+            color: white;
+            text-align: center;
+            margin: 0 0 10px 0;
+            font-size: 16px;
+            font-weight: 500;
+        }
+        /*mobile support*/
+        /*
+
+
         #controls {
             position: fixed;
             bottom: 0;
@@ -43,14 +69,13 @@
             z-index: 100;
         }
 
-        /* Control groups */
         .control-group {
             display: flex;
             justify-content: space-between;
             gap: 8px;
         }
 
-        /* Buttons styling */
+
         button {
             flex: 1;
             padding: 14px 5px;
@@ -71,16 +96,9 @@
             transform: scale(0.96);
         }
 
-        /* Display text */
-        #display {
-            color: white;
-            text-align: center;
-            margin: 0 0 10px 0;
-            font-size: 16px;
-            font-weight: 500;
-        }
 
-        /* Media queries for responsiveness */
+
+
         @media (min-width: 768px) {
             #controls {
                 top: 10px;
@@ -113,7 +131,7 @@
             }
         }
 
-        /* Orientation warning for mobile */
+
         @media (max-height: 500px) and (orientation: landscape) {
             #orientation-warning {
                 position: fixed;
@@ -135,9 +153,18 @@
         #orientation-warning {
             display: none;
         }
+
+        */
+
+
     </style>
 </head>
 <body>
+<header>
+    <button onclick="save()">Save</button>
+    <span style = 'margin-left: 10px;'>Upload file: <input type = 'file' id = 'upload'></span>
+
+</header>
 <p id="display"></p>
 
 <!--Mobile support-->
