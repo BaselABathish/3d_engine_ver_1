@@ -17,7 +17,9 @@ Trying to understand 3D graphics concepts by applying what I study. This project
 - **Rotation Controls:** Rotate camera with arrow keys
 - **Perspective Projection:** Simulates depth on a 2D canvas
 - **Vanilla JS:** No external libraries required
+- **Build what you want:** Place blocks in the world
 - **Save and load your creations:** Save as json files 
+
 
 ---
 
@@ -31,6 +33,7 @@ Trying to understand 3D graphics concepts by applying what I study. This project
 | A / D              | Move camera left/right (X-axis)       |
 | Q / E              | Move camera up/down (Y-axis)          |
 | Spacebar           | Place block                           |
+| c                  | Circle                                | 
 
 ---
 

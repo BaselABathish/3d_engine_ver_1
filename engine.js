@@ -31,7 +31,7 @@
     });
 
     let distance = 3 //how far away blocks will be placed
-    function place_item() {
+    function place_item() { //todo: z axis and name variables better
         //this is basically just triangles
         let a = Math.sin(angleX) * distance
         let f = Math.sin(angleY) * distance
