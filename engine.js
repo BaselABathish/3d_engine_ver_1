@@ -11,10 +11,10 @@
 
     window.addEventListener('keydown', e => {
 
-    if (e.key === 'ArrowLeft') angleY += 0.1;
-    if (e.key === 'ArrowRight') angleY -= 0.1;
-    if (e.key === 'ArrowUp') angleX -= 0.1;
-    if (e.key === 'ArrowDown') angleX += 0.1;
+    if (e.key === 'ArrowLeft') angleY = (angleY + 0.1) % (2 * Math.PI); //loop back around after 360 degrees
+    if (e.key === 'ArrowRight') angleY = (angleY - 0.1) % (2 * Math.PI);
+    if (e.key === 'ArrowUp') angleX = (angleX - 0.1) % (2 * Math.PI);
+    if (e.key === 'ArrowDown') angleX = (angleX + 0.1) % (2 * Math.PI);
 
     if (e.code === 'Space') place_item();
 
@@ -24,13 +24,21 @@
     if (e.key === 'd') cameraX += 1;
     if (e.key === 'w') cameraZ += 1;
     if (e.key === 's') cameraZ -= 1;
+
+    if (e.key === 'c') circle();
     dis.innerText = `X pos: ${cameraX}, Y pos: ${cameraY}, Z pos: ${cameraZ} \n X angle: ${angleX} Y angle: ${angleY}`;
 
     });
 
-    function place_item() { //will do later, just made the function as a reminder
-        console.log(cameraX, cameraY, cameraZ)
-        cube(cameraX, cameraY, cameraZ+2, 1)
+    let distance = 3 //how far away blocks will be placed
+    function place_item() {
+        //this is basically just triangles
+        let a = Math.sin(angleX) * distance
+        let f = Math.sin(angleY) * distance
+
+        let c = Math.cos(Math.max(Math.abs(angleX), Math.abs(angleY))) * distance //not sure that this is correct, its just what I came up with on the spot. should work since c is the same for both triangles.
+
+        cube(cameraX+f, cameraY + a, cameraZ - c, 1)
     }
 
     /*
@@ -179,7 +187,7 @@
     function sphere(mx, my, mz, msize) {
         let visited = new Set()
         function wrapper(x, y, z, size){
-            console.log(size)
+            //console.log(size)
 
             if (size > 1) {
                 wrapper(x+1, y, z, size-1);
@@ -261,23 +269,13 @@
 
 
     }
-
- /*
-    cube(0, 0, 0, 1)
-    cube(10, 0, 0, 1)
-    cube(10, 0, 5, 1)
-    cube(0, 0, 5, 1)
-    cube(0, 1, 0, 1)
-    cube(10, 1, 0, 1)
-    cube(10, 1, 5, 1)
-    cube(0, 1, 5, 1)
-
-    wall(0, 2, 0, 'x+', 10)
-    wall(0, 2, 5, 'x+', 10)
-    wall(10, 2, 0, 'z+', 6)
-    wall(0, 2, 0, 'z+', 6)
-
-  */
+    function circle() {
+        let step = 0.1; // how much to rotate each step
+        for (let a = 0; a < 2*Math.PI; a += step) {
+            angleX = a;
+            place_item();
+        }
+    }
 
     function save() {
         const content = JSON.stringify({vertices: vertices, edges: edges});
@@ -311,10 +309,6 @@
         fr.readAsText(file);
     });
 
-
-
-
-
     // TEMP placeholder: simply draw vertices as points (maybe fill in later)
     function draw(vertices) {
     ctx.clearRect(0, 0, canvas.width, canvas.height); //clears canvas
@@ -323,23 +317,24 @@
 
     for (const [i, j] of edges) { //connect each i to j
 
-    const ix = ((vertices[i][0]*d)/ (vertices[i][2] +Zoffset)); //try with and without offset
-    const iy = ((vertices[i][1]*d)/ (vertices[i][2] +Zoffset));
+        const ix = ((vertices[i][0]*d)/ (vertices[i][2] +Zoffset)); //try with and without offset
+        const iy = ((vertices[i][1]*d)/ (vertices[i][2] +Zoffset));
 
-    const jx = ((vertices[j][0]*d)/ (vertices[j][2] +Zoffset));
-    const jy = ((vertices[j][1]*d)/ (vertices[j][2] +Zoffset));
+        const jx = ((vertices[j][0]*d)/ (vertices[j][2] +Zoffset));
+        const jy = ((vertices[j][1]*d)/ (vertices[j][2] +Zoffset));
 
-    const x1 = canvas.width/2 + ix //0, 0 on the canvas is in the top left corner, not the centre of the screen
+        const x1 = canvas.width/2 + ix //0, 0 on the canvas is in the top left corner, not the centre of the screen
 
-    const y1 = canvas.height/2 - iy //on the canvas y increases downward, so you must subtract
-    const x2 = canvas.width/2 + jx
-    const y2 = canvas.height/2 - jy
+        const y1 = canvas.height/2 - iy //on the canvas y increases downward, so you must subtract
+        const x2 = canvas.width/2 + jx
+        const y2 = canvas.height/2 - jy
 
-    ctx.beginPath();
-    ctx.moveTo(x1, y1);
-    ctx.lineTo(x2, y2);
-    ctx.strokeStyle = 'white';
-    ctx.stroke();
+        ctx.beginPath();
+        ctx.moveTo(x1, y1);
+        ctx.lineTo(x2, y2);
+        ctx.strokeStyle = 'white';
+        ctx.stroke();
+
 }
 }
 
